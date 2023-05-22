@@ -14,7 +14,7 @@ from utils import truncate_text,clean,count_word_num,process,text_clean
 from fuzzywuzzy import fuzz
 url = 'https://cloudgpt-dev.azurewebsites.net/api/cloud-gpt/scenario/raw-endpoint'
 
-os.environ['CHATGPT_API_KEY'] = 'f3a60edab47542a9a1e89b832f9cdbba'
+os.environ['CHATGPT_API_KEY'] = ''
 oai_key = os.environ.get("CHATGPT_API_KEY")
 openai.api_type = "azure"
 openai.api_base = "https://cloudgpt.openai.azure.com/"
