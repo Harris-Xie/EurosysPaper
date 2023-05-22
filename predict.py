@@ -22,11 +22,15 @@ openai.api_key = oai_key
 openai.api_version = "2023-03-15-preview"
 chatgpt_model_name= "gpt-4-20230321"
 
-def fasttext_predict(input):
-    model = fasttext.load_model('Data_Models/models')
-    ft_label = model.predict(input)[0][0]
-    ft_label = ft_label[9:]
-    return ft_label
+"""
+This file primarily processes web application requests and manages the flow of data processing.
+
+The <OWL> method is our advanced approach.
+The <GPT_predict> method generates output results using the GPT model.
+The <onlyGPT> method is for ablation experiment, using only prompt to make prediction
+The <onlyRetrieval> method is for ablation experiment, only return the most similar incident.
+
+"""
 
 
 
@@ -34,9 +38,9 @@ def GPT_predict(alpha,num):
 
     column_list=['Advice_Detail_Response']
 
-    train_data = pd.read_json('../Data_Models/GPT4-sum/train.jsonl', lines=True)
-    model = fasttext.load_model('../Data_Models/models')
-    test_data=pd.read_json('../Data_Models/GPT4-sum/test.jsonl',lines=True)
+    train_data = pd.read_json('Data_Models/GPT4-sum/train.jsonl', lines=True)
+    model = fasttext.load_model('Data_Models/models')
+    test_data=pd.read_json('Data_Models/GPT4-sum/test.jsonl',lines=True)
     test_data['CreatedTime'] = pd.to_datetime(test_data['CreatedTime'])
     train_data['CreatedTime'] = pd.to_datetime(train_data['CreatedTime'])
     train_data = train_data.sort_values('CreatedTime', ascending=True).reset_index(drop=True)
@@ -45,7 +49,7 @@ def GPT_predict(alpha,num):
     for i in range(len(test_data)):
         y_true.append(test_data['Keyword'][i])
     y_true_str = json.dumps(y_true)
-    with open('../Data_Models/GPT4-sum/output_true.json', 'w') as f:
+    with open('Data_Models/GPT4-sum/output_true.json', 'w') as f:
         f.write(y_true_str)
     y_pred=[]
     y_generator={}
@@ -179,15 +183,15 @@ def GPT_predict(alpha,num):
 
 
     json_gen = json.dumps(y_generator)
-    with open('../Data_Models/GPT4-sum/output_generator_{}_{}_fixed.json'.format(alpha, num), 'w') as f:
+    with open('Data_Models/GPT4-sum/output_generator_{}_{}_fixed.json'.format(alpha, num), 'w') as f:
         f.write(json_gen)
     return 0
 
 
 def onlyGPT():
-    train_data = pd.read_json('../Data_Models/train.jsonl', lines=True)
+    train_data = pd.read_json('Data_Models/train.jsonl', lines=True)
     keyword_list=list(train_data['Keyword'].unique())
-    test_data = pd.read_json('../Data_Models/test_summarized.jsonl', lines=True)
+    test_data = pd.read_json('Data_Models/test_summarized.jsonl', lines=True)
     y_true = []
     y_pred=[]
 
@@ -223,14 +227,14 @@ def onlyGPT():
         if test_data['Keyword'][i] not in keyword_list:
             keyword_list.append(test_data['Keyword'][i])
     json_str = json.dumps(y_pred)
-    with open('../Data_Models/new_result/output_OnlyGPT.json', 'w') as f:
+    with open('Data_Models/new_result/output_OnlyGPT.json', 'w') as f:
         f.write(json_str)
 
 def OnlyRetrieval(alpha,num):
     column_list = ['Advice_Detail_Response']
-    train_data = pd.read_json('../Data_Models/train.jsonl', lines=True)
-    model = fasttext.load_model('../Data_Models/train_models')
-    test_data = pd.read_json('../Data_Models/test_summarized.jsonl', lines=True)
+    train_data = pd.read_json('Data_Models/train.jsonl', lines=True)
+    model = fasttext.load_model('Data_Models/train_models')
+    test_data = pd.read_json('Data_Models/test_summarized.jsonl', lines=True)
     test_data['CreatedTime'] = pd.to_datetime(test_data['CreatedTime'])
     train_data['CreatedTime'] = pd.to_datetime(train_data['CreatedTime'])
     train_data = train_data.sort_values('CreatedTime', ascending=True).reset_index(drop=True)
@@ -239,7 +243,7 @@ def OnlyRetrieval(alpha,num):
     for i in range(len(test_data)):
         y_true.append(test_data['Keyword'][i])
     y_true_str = json.dumps(y_true)
-    with open('../Data_Models/output_true.json', 'w') as f:
+    with open('Data_Models/output_true.json', 'w') as f:
         f.write(y_true_str)
     y_pred = []
     # store the index
@@ -286,7 +290,7 @@ def OnlyRetrieval(alpha,num):
         index.add(query_vector)
 
     json_str = json.dumps(y_pred)
-    with open('../Data_Models/new_result/output_OnlyRetrieval.json'.format(alpha, num), 'w') as f:
+    with open('Data_Models/new_result/output_OnlyRetrieval.json'.format(alpha, num), 'w') as f:
         f.write(json_str)
 
 def OWL():
@@ -299,7 +303,7 @@ def OWL():
         results.append(result)
     print(results)
     results=json.dumps(results)
-    with open('../Data_Models/GPT4-sum/output_grid_search.json', 'w') as f:
+    with open('Data_Models/GPT4-sum/output_grid_search.json', 'w') as f:
         f.write(results)
 
 
