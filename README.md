@@ -1,4 +1,4 @@
-# Root Cause Analysis (RCA) for Microsoft Services
+# Root Cause Analysis (RCA) for Cloud Services
 
 This repository contains scripts and data for conducting Root Cause Analysis (RCA) on Microsoft Services. The following is a description of the directory structure and the purpose of each script.
 
